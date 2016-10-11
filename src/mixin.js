@@ -6,8 +6,8 @@ export default (options) => ({
             [options.errorBagName]: this.$validator.errorBag
         };
     },
-    ready() {
-        this.$nextTick(() => { this.$emit('validatorReady'); });
+    mounted() {
+        this.$emit('validatorReady');
     },
     destroyed() {
         unregister(this);

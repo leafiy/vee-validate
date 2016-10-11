@@ -1,10 +1,11 @@
 /**
  * Determines the input field scope.
  */
-export const getScope = (el) => {
-    return el.dataset.scope || (el.form && el.form.dataset.scope);
-};
+export const getScope = (el) => el.dataset.scope || (el.form && el.form.dataset.scope);
 
+/**
+ * Debounces a function.
+ */
 export const debounce = (func, threshold = 100, execAsap = false) => {
     if (! threshold) {
         return func;
@@ -32,6 +33,9 @@ export const debounce = (func, threshold = 100, execAsap = false) => {
     };
 };
 
+/**
+ * Emits a warning to the console.
+ */
 export const warn = (message) => {
     if (! console) {
         return;
