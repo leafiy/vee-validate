@@ -2081,46 +2081,47 @@ var directive = (function (options) {
 
 // eslint-disable-next-line
 var install = function install(Vue) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    var _ref$locale = _ref.locale;
-    var locale = _ref$locale === undefined ? 'en' : _ref$locale;
-    var _ref$delay = _ref.delay;
-    var delay = _ref$delay === undefined ? 0 : _ref$delay;
-    var _ref$errorBagName = _ref.errorBagName;
-    var errorBagName = _ref$errorBagName === undefined ? 'errors' : _ref$errorBagName;
-    var _ref$dictionary = _ref.dictionary;
-    var dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
-    var _ref$strict = _ref.strict;
-    var strict = _ref$strict === undefined ? true : _ref$strict;
+  var _ref$locale = _ref.locale;
+  var locale = _ref$locale === undefined ? 'en' : _ref$locale;
+  var _ref$delay = _ref.delay;
+  var delay = _ref$delay === undefined ? 0 : _ref$delay;
+  var _ref$errorBagName = _ref.errorBagName;
+  var errorBagName = _ref$errorBagName === undefined ? 'errors' : _ref$errorBagName;
+  var _ref$dictionary = _ref.dictionary;
+  var dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
 
-    if (dictionary) {
-        Validator.updateDictionary(dictionary);
+  if (dictionary) {
+    Validator.updateDictionary(dictionary);
+  }
+
+  Validator.setDefaultLocale(locale);
+
+  var options = {
+    locale: locale,
+    delay: delay,
+    dictionary: dictionary,
+    errorBagName: errorBagName
+  };
+
+  Object.defineProperties(Vue.prototype, {
+    $validator: {
+      get: function get() {
+        return register(this);
+      }
     }
+  });
 
-    Validator.setDefaultLocale(locale);
-    Validator.setStrictMode(strict);
-
-    var options = {
-        locale: locale,
-        delay: delay,
-        dictionary: dictionary,
-        errorBagName: errorBagName
-    };
-
-    Object.defineProperties(Vue.prototype, {
-        $validator: {
-            get: function get() {
-                return register(this);
-            }
-        }
-    });
-
-    Vue.mixin(mixin(options)); // Install Mixin.
-    Vue.directive('validate', directive(options)); // Install directive.
+  Vue.mixin(mixin(options)); // Install Mixin.
+  Vue.directive('validate', directive(options)); // Install directive.
 };
 
-var index = { install: install, Validator: Validator, ErrorBag: ErrorBag };
+var index = {
+  install: install,
+  Validator: Validator,
+  ErrorBag: ErrorBag
+};
 
 return index;
 
