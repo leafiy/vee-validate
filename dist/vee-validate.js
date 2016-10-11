@@ -9,12 +9,6 @@ var email$1 = (function (value) {
   );
 });
 
-var In = (function (value, options) {
-  return !!options.filter(function (option) {
-    return option == value;
-  }).length;
-}); // eslint-disable-line
-
 var required$1 = (function (value) {
     if (Array.isArray(value)) {
         return !!value.length;
@@ -345,63 +339,14 @@ var max$1 = (function (value, _ref) {
     return String(value).length <= length;
 });
 
-var not_in$1 = (function (value, options) {
-  return !options.filter(function (option) {
-    return option == value;
-  }).length;
-}); // eslint-disable-line
-
-var alpha$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z]*$/.test(value);
-});
-
-var alpha_num$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z0-9]*$/.test(value);
-});
-
-var alpha_dash$1 = (function (value) {
-  return !Array.isArray(value) && /^[a-zA-Z0-9_-]*$/.test(value);
-});
-
 var numeric$1 = (function (value) {
   return !Array.isArray(value) && /^[0-9]*$/.test(value);
-});
-
-var regex$1 = (function (value, _ref) {
-    var _ref2 = toArray(_ref);
-
-    var regex = _ref2[0];
-
-    var flags = _ref2.slice(1);
-
-    if (regex instanceof RegExp) {
-        return regex.test(value);
-    }
-
-    return new RegExp(regex, flags).test(String(value));
-});
-
-// TODO: Maybe add ipv6 flag?
-var ip$1 = (function (value) {
-  return (/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value)
-  );
 });
 
 var ext$1 = (function (files, extensions) {
     var regex = new RegExp('.(' + extensions.join('|') + ')$', 'i');
     for (var i = 0; i < files.length; i++) {
         if (!regex.test(files[i].name)) {
-            return false;
-        }
-    }
-
-    return true;
-});
-
-var mimes$1 = (function (files, mimes) {
-    var regex = new RegExp(mimes.join('|').replace('*', '.+') + '$', 'i');
-    for (var i = 0; i < files.length; i++) {
-        if (!regex.test(files[i].type)) {
             return false;
         }
     }
@@ -428,17 +373,6 @@ var size$1 = (function (files, _ref) {
     return true;
 });
 
-var digits$1 = (function (value, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var length = _ref2[0];
-
-    var strVal = String(value);
-
-    return (/^[0-9]*$/.test(strVal) && strVal.length === Number(length)
-    );
-});
-
 var image$1 = (function (files) {
     for (var i = 0; i < files.length; i++) {
         if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
@@ -449,60 +383,12 @@ var image$1 = (function (files) {
     return true;
 });
 
-var validateImage = function validateImage(file, width, height) {
-    var URL = window.URL || window.webkitURL;
-    return new Promise(function (resolve) {
-        var image = new Image();
-        image.onerror = function () {
-            return resolve({ valid: false });
-        };
-        image.onload = function () {
-            return resolve({
-                valid: image.width === Number(width) && image.height === Number(height)
-            });
-        };
-
-        image.src = URL.createObjectURL(file);
-    });
-};
-
-var dimensions$1 = (function (files, _ref) {
-    var _ref2 = slicedToArray(_ref, 2);
-
-    var width = _ref2[0];
-    var height = _ref2[1];
-
-    var list = [];
-    for (var i = 0; i < files.length; i++) {
-        // if file is not an image, reject.
-        if (!/\.(jpg|svg|jpeg|png|bmp|gif)$/i.test(files[i].name)) {
-            return false;
-        }
-
-        list.push(files[i]);
-    }
-
-    return Promise.all(list.map(function (file) {
-        return validateImage(file, width, height);
-    }));
-});
-
 var between$1 = (function (value, _ref) {
   var _ref2 = slicedToArray(_ref, 2);
 
   var min = _ref2[0];
   var max = _ref2[1];
   return Number(min) <= value && Number(max) >= value;
-});
-
-var confirmed$1 = (function (value, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var confirmedField = _ref2[0];
-
-    var field = document.querySelector("input[name='" + confirmedField + "']");
-
-    return !!(field && String(value) === field.value);
 });
 
 var url$1 = (function (value, params) {
@@ -517,54 +403,47 @@ var url$1 = (function (value, params) {
     return isUrl;
 });
 
-var decimal$1 = (function (value) {
-    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
-
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var decimals = _ref2[0];
-
-    if (Array.isArray(value)) {
-        return false;
-    }
-
-    if (value === null || value === undefined || value === '') {
-        return true;
-    }
-
-    var regexPart = decimals === '*' ? '*' : '{0,' + decimals + '}';
-    var regex = new RegExp('^[0-9]*.?[0-9]' + regexPart + '$');
-
-    if (!regex.test(value)) {
-        return false;
-    }
-
-    return !Number.isNaN(parseFloat(value));
+var password$1 = (function (value) {
+  return (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value)
+  );
 });
 
+// import In from './in';
+// import not_in from './notIn'; // eslint-disable-line
+// import alpha from './alpha'; // eslint-disable-line
+// import alpha_num from './alpha_num'; // eslint-disable-line
+// import alpha_dash from './alpha_dash'; // eslint-disable-line
+// import regex from './regex';
+// import ip from './ip';
+// import mimes from './mimes';
+// import digits from './digits';
+// import dimensions from './dimensions';
+// import confirmed from './confirmed';
+// import decimal from './decimal';
 var Rules = {
-    email: email$1,
-    min: min$1,
-    max: max$1,
-    required: required$1,
-    in: In,
-    not_in: not_in$1,
-    alpha: alpha$1,
-    alpha_num: alpha_num$1,
-    alpha_dash: alpha_dash$1,
-    numeric: numeric$1,
-    regex: regex$1,
-    ip: ip$1,
-    ext: ext$1,
-    mimes: mimes$1,
-    size: size$1,
-    digits: digits$1,
-    image: image$1,
-    dimensions: dimensions$1,
-    between: between$1,
-    confirmed: confirmed$1,
-    url: url$1,
-    decimal: decimal$1
+  email: email$1,
+  min: min$1,
+  max: max$1,
+  required: required$1,
+  // in: In,
+  // not_in,
+  // alpha,
+  // alpha_num,
+  // alpha_dash,
+  numeric: numeric$1,
+  // regex,
+  // ip,
+  ext: ext$1,
+  // mimes,
+  size: size$1,
+  // digits,
+  image: image$1,
+  // dimensions,
+  between: between$1,
+  // confirmed,
+  url: url$1,
+  // decimal,
+  password: password$1
 };
 
 var ErrorBag = function () {
@@ -946,100 +825,103 @@ var Dictionary = function () {
 /* istanbul ignore next */
 /* eslint-disable max-len */
 var messages = {
-    alpha_dash: function alpha_dash(field) {
-        return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
-    },
-    alpha_num: function alpha_num(field) {
-        return 'The ' + field + ' may only contain alpha-numeric characters.';
-    },
-    alpha: function alpha(field) {
-        return 'The ' + field + ' may only contain alphabetic characters.';
-    },
-    between: function between(field, _ref) {
-        var _ref2 = slicedToArray(_ref, 2);
+  alpha_dash: function alpha_dash(field) {
+    return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
+  },
+  alpha_num: function alpha_num(field) {
+    return 'The ' + field + ' may only contain alpha-numeric characters.';
+  },
+  alpha: function alpha(field) {
+    return 'The ' + field + ' may only contain alphabetic characters.';
+  },
+  between: function between(field, _ref) {
+    var _ref2 = slicedToArray(_ref, 2);
 
-        var min = _ref2[0];
-        var max = _ref2[1];
-        return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
-    },
-    confirmed: function confirmed(field, _ref3) {
-        var _ref4 = slicedToArray(_ref3, 1);
+    var min = _ref2[0];
+    var max = _ref2[1];
+    return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
+  },
+  confirmed: function confirmed(field, _ref3) {
+    var _ref4 = slicedToArray(_ref3, 1);
 
-        var confirmedField = _ref4[0];
-        return 'The ' + field + ' does not match the ' + confirmedField + '.';
-    },
-    decimal: function decimal(field) {
-        var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
+    var confirmedField = _ref4[0];
+    return 'The ' + field + ' does not match the ' + confirmedField + '.';
+  },
+  decimal: function decimal(field) {
+    var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
 
-        var _ref6 = slicedToArray(_ref5, 1);
+    var _ref6 = slicedToArray(_ref5, 1);
 
-        var decimals = _ref6[0];
-        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
-    },
-    digits: function digits(field, _ref7) {
-        var _ref8 = slicedToArray(_ref7, 1);
+    var decimals = _ref6[0];
+    return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
+  },
+  digits: function digits(field, _ref7) {
+    var _ref8 = slicedToArray(_ref7, 1);
 
-        var length = _ref8[0];
-        return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
-    },
-    dimensions: function dimensions(field, _ref9) {
-        var _ref10 = slicedToArray(_ref9, 2);
+    var length = _ref8[0];
+    return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
+  },
+  dimensions: function dimensions(field, _ref9) {
+    var _ref10 = slicedToArray(_ref9, 2);
 
-        var width = _ref10[0];
-        var height = _ref10[1];
-        return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
-    },
-    email: function email(field) {
-        return 'The ' + field + ' must be a valid email.';
-    },
-    ext: function ext(field) {
-        return 'The ' + field + ' must be a valid file.';
-    },
-    image: function image(field) {
-        return 'The ' + field + ' must be an image.';
-    },
-    in: function _in(field) {
-        return 'The ' + field + ' must be a valid value.';
-    },
-    ip: function ip(field) {
-        return 'The ' + field + ' must be a valid ip address.';
-    },
-    max: function max(field, _ref11) {
-        var _ref12 = slicedToArray(_ref11, 1);
+    var width = _ref10[0];
+    var height = _ref10[1];
+    return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
+  },
+  email: function email(field) {
+    return 'The ' + field + ' must be a valid email.';
+  },
+  ext: function ext(field) {
+    return 'The ' + field + ' must be a valid file.';
+  },
+  image: function image(field) {
+    return 'The ' + field + ' must be an image.';
+  },
+  in: function _in(field) {
+    return 'The ' + field + ' must be a valid value.';
+  },
+  ip: function ip(field) {
+    return 'The ' + field + ' must be a valid ip address.';
+  },
+  max: function max(field, _ref11) {
+    var _ref12 = slicedToArray(_ref11, 1);
 
-        var length = _ref12[0];
-        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
-    },
-    mimes: function mimes(field) {
-        return 'The ' + field + ' must have a valid file type.';
-    },
-    min: function min(field, _ref13) {
-        var _ref14 = slicedToArray(_ref13, 1);
+    var length = _ref12[0];
+    return 'The ' + field + ' may not be greater than ' + length + ' characters.';
+  },
+  mimes: function mimes(field) {
+    return 'The ' + field + ' must have a valid file type.';
+  },
+  min: function min(field, _ref13) {
+    var _ref14 = slicedToArray(_ref13, 1);
 
-        var length = _ref14[0];
-        return 'The ' + field + ' must be at least ' + length + ' characters.';
-    },
-    not_in: function not_in(field) {
-        return 'The ' + field + ' must be a valid value.';
-    },
-    numeric: function numeric(field) {
-        return 'The ' + field + ' may only contain numeric characters.';
-    },
-    regex: function regex(field) {
-        return 'The ' + field + ' format is invalid.';
-    },
-    required: function required(field) {
-        return 'The ' + field + ' is required.';
-    },
-    size: function size(field, _ref15) {
-        var _ref16 = slicedToArray(_ref15, 1);
+    var length = _ref14[0];
+    return 'The ' + field + ' must be at least ' + length + ' characters.';
+  },
+  not_in: function not_in(field) {
+    return 'The ' + field + ' must be a valid value.';
+  },
+  numeric: function numeric(field) {
+    return 'The ' + field + ' may only contain numeric characters.';
+  },
+  regex: function regex(field) {
+    return 'The ' + field + ' format is invalid.';
+  },
+  required: function required(field) {
+    return 'The ' + field + ' is required.';
+  },
+  size: function size(field, _ref15) {
+    var _ref16 = slicedToArray(_ref15, 1);
 
-        var _size = _ref16[0];
-        return 'The ' + field + ' must be less than ' + _size + ' KB.';
-    },
-    url: function url(field) {
-        return 'The ' + field + ' is not a valid URL.';
-    }
+    var _size = _ref16[0];
+    return 'The ' + field + ' must be less than ' + _size + ' KB.';
+  },
+  url: function url(field) {
+    return 'The ' + field + ' is not a valid URL.';
+  },
+  password: function password(field) {
+    return field + ' must be Minimum 8 characters and at least 1 Alphabet and 1 Number.';
+  }
 };
 
 /**
