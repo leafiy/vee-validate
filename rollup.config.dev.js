@@ -11,7 +11,7 @@ export default {
             presets: [
                 ['es2015', { modules: false }]
             ],
-            plugins: ['external-helpers']
+            plugins: ['transform-object-assign', 'external-helpers']
         }),
         nodeResolve()
     ],

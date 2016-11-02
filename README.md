@@ -28,13 +28,13 @@ npm install vee-validate@next --save
 
 **Vue 1.0**:
 ```
-bower install vee-validate#1.0.0-beta.7 --save
+bower install vee-validate#1.0.0-beta.8 --save
 ```
 
 **Vue 2.0**:
 
 ```
-bower install vee-validate#2.0.0-beta.12 --save
+bower install vee-validate#2.0.0-beta.13 --save
 ```
 
 ### CDN
@@ -44,13 +44,13 @@ vee-validate is also available on jsdelivr cdn:
 **Vue 1.0**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.7/vee-validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vee-validate/1.0.0-beta.8/vee-validate.min.js"></script>
 ```
 
 **Vue 2.0**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.12/vee-validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/vee-validate/2.0.0-beta.13/vee-validate.min.js"></script>
 ```
 
 Or select whatever [version](https://www.jsdelivr.com/projects/vee-validate) you would like to use.
@@ -90,6 +90,15 @@ Of course there is more to it than that, refer to the documentation for more det
 ### Documentation
 
 Read the [documentation and demos](http://vee-validate.logaretm.com/).
+
+### Compatibility
+
+This plugin should be compatible with the major browsers, but it requires few polyfills to work on older ones. The polyfills are:
+
+- Promise Polyfill.
+- Object.assign Polyfill.
+
+The reason they are not included is because most of the workflows already use polyfills within their code, so to cut down the package size the redundant polyfills were removed, you can use [Polyfill.io](https://polyfill.io/v2/docs/) to provide the needed polyfills for all browsers automatically.
 
 ### Contributing
 

@@ -2,8 +2,7 @@ import { getScope, debounce, warn } from './utils/helpers';
 
 const DEFAULT_EVENT_NAME = 'veeValidate';
 
-export default class ListenerGenerator
-{
+export default class ListenerGenerator {
     constructor(el, binding, context, options) {
         this.callbacks = [];
         this.el = el;
@@ -17,8 +16,8 @@ export default class ListenerGenerator
      * Determines if the validation rule requires additional listeners on target fields.
      */
     _hasFieldDependency(rules) {
-        const results = rules.split('|').filter(r => !! r.match(/confirmed|after|before/));
-        if (! results.length) {
+        const results = rules.split('|').filter(r => !!r.match(/confirmed|after|before/));
+        if (!results.length) {
             return false;
         }
 
@@ -36,8 +35,11 @@ export default class ListenerGenerator
      * Validates files, triggered by 'change' event.
      */
     _fileListener() {
-        const isValid = this.vm.$validator.validate(this.fieldName, this.el.files, getScope(this.el));
-        if (! isValid && this.binding.modifiers.reject) {
+
+        const isValid = this.vm.$validator.validate(
+            this.fieldName, this.el.files, getScope(this.el)
+        );
+        if (!isValid && this.binding.modifiers.reject) {
             // eslint-disable-next-line
             el.value = '';
         }
@@ -48,7 +50,7 @@ export default class ListenerGenerator
      */
     _radioListener() {
         const checked = document.querySelector(`input[name="${this.el.name}"]:checked`);
-        if (! checked) {
+        if (!checked) {
             this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
             return;
         }
@@ -57,12 +59,27 @@ export default class ListenerGenerator
     }
 
     /**
+     * Validates checkboxes, triggered by change event.
+     */
+    _checkboxListener() {
+        const checkedBoxes = document.querySelectorAll(`input[name="${this.el.name}"]:checked`);
+        if (!checkedBoxes || !checkedBoxes.length) {
+            this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
+            return;
+        }
+
+        [...checkedBoxes].forEach(box => {
+            this.vm.$validator.validate(this.fieldName, box.value, getScope(this.el));
+        });
+    }
+
+    /**
      * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
      * From the event.
      */
     _getScopedListener(callback) {
         return (scope) => {
-            if (! scope || scope === getScope(this.el) || scope instanceof Event) {
+            if (!scope || scope === getScope(this.el) || scope instanceof Event) {
                 callback();
             }
         };
@@ -72,13 +89,15 @@ export default class ListenerGenerator
      * Attaches validator event-triggered validation.
      */
     _attachValidatorEvent() {
-        const listener = this._getScopedListener(
-            this.el.type === 'radio' ? this._radioListener.bind(this) :
-                                       this._inputListener.bind(this)
-        );
+        const listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
         this.vm.$on(DEFAULT_EVENT_NAME, listener);
-        this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener });
+        this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener });
+        this.vm.$on('VALIDATOR_OFF', (field) => {
+            if (this.fieldName === field) {
+                this.detach();
+            }
+        });
 
         const fieldName = this._hasFieldDependency(this.el.dataset.rules);
         if (fieldName) {
@@ -86,13 +105,14 @@ export default class ListenerGenerator
             // the element isn't mounted yet.
             this.vm.$once('validatorReady', () => {
                 const target = document.querySelector(`input[name='${fieldName}']`);
-                if (! target) {
+                if (!target) {
                     warn('Cannot find target field, no additional listeners were attached.');
                     return;
                 }
 
                 target.addEventListener('input', listener);
-                this.callbacks.push({ event: 'input', listener, el: target });
+
+                this.callbacks.push({ name: 'input', listener, el: target });
             });
         }
     }
@@ -115,6 +135,13 @@ export default class ListenerGenerator
             };
         }
 
+        if (this.el.type === 'checkbox') {
+            return {
+                name: 'change',
+                listener: this._checkboxListener
+            };
+        }
+
         return {
             name: 'input',
             listener: this._inputListener
@@ -131,11 +158,11 @@ export default class ListenerGenerator
             this.el.dataset.delay || this.options.delay
         );
 
-        if (this.el.type === 'radio') {
+        if (~['radio', 'checkbox'].indexOf(this.el.type)) {
             this.vm.$once('validatorReady', () => {
                 [...document.querySelectorAll(`input[name="${this.el.name}"]`)].forEach(input => {
                     input.addEventListener(handler.name, listener);
-                    this.callbacks.push({ event: handler.name, callback: listener, el: input });
+                    this.callbacks.push({ name: handler.name, listener, el: input });
                 });
             });
 
@@ -143,7 +170,7 @@ export default class ListenerGenerator
         }
 
         this.el.addEventListener(handler.name, listener);
-        this.callbacks.push({ event: handler.name, callback: listener, el: this.el });
+        this.callbacks.push({ name: handler.name, listener, el: this.el });
     }
 
     /**
@@ -155,7 +182,7 @@ export default class ListenerGenerator
 
         if (this.binding.expression) {
             // if its bound, validate it. (since update doesn't trigger after bind).
-            if (! this.binding.modifiers.initial) {
+            if (!this.binding.modifiers.initial) {
                 this.vm.$validator.validate(
                     this.binding.expression,
                     this.binding.value,
@@ -173,13 +200,13 @@ export default class ListenerGenerator
      * Removes all attached event listeners.
      */
     detach() {
-        this.vm.$off(
-            DEFAULT_EVENT_NAME,
-            this.callbacks.filter(({ event }) => event === DEFAULT_EVENT_NAME)[0]
-        );
 
-        this.callbacks.filter(({ event }) => event !== DEFAULT_EVENT_NAME).forEach(h => {
-            h.el.removeEventListener(h.event, h.listener);
+        this.callbacks.filter(({ name }) => name === DEFAULT_EVENT_NAME).forEach(h => {
+            this.vm.$off(DEFAULT_EVENT_NAME, h.listener);
+        });
+
+        this.callbacks.filter(({ name }) => name !== DEFAULT_EVENT_NAME).forEach(h => {
+            h.el.removeEventListener(h.name, h.listener);
         });
     }
 }

@@ -4,23 +4,6 @@
   (global.VeeValidate = factory());
 }(this, (function () { 'use strict';
 
-var email$1 = (function (value) {
-  return (/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value)
-  );
-});
-
-var required$1 = (function (value) {
-    if (Array.isArray(value)) {
-        return !!value.length;
-    }
-
-    if (value === undefined || value === null) {
-        return false;
-    }
-
-    return !!String(value).trim().length;
-});
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
@@ -191,6 +174,20 @@ var defineProperty = function (obj, key, value) {
   return obj;
 };
 
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
 var get$1 = function get$1(object, property, receiver) {
   if (object === null) object = Function.prototype;
   var desc = Object.getOwnPropertyDescriptor(object, property);
@@ -316,10 +313,51 @@ var toConsumableArray = function (arr) {
   }
 };
 
-var min$1 = (function (value, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
+var between$1 = (function (value, _ref) {
+  var _ref2 = slicedToArray(_ref, 2),
+      min = _ref2[0],
+      max = _ref2[1];
 
-    var length = _ref2[0];
+  return Number(min) <= value && Number(max) >= value;
+});
+
+var validateImage = function validateImage(file, width, height) {
+    var URL = window.URL || window.webkitURL;
+    return new Promise(function (resolve) {
+        var image = new Image();
+        image.onerror = function () {
+            return resolve({ valid: false });
+        };
+        image.onload = function () {
+            return resolve({
+                valid: image.width === Number(width) && image.height === Number(height)
+            });
+        };
+
+        image.src = URL.createObjectURL(file);
+    });
+};
+
+var email$1 = (function (value) {
+  return (/^(([^<>()[\]\\.,;:#\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,6}))$/.test(value)
+  );
+});
+
+var required$1 = (function (value) {
+    if (Array.isArray(value)) {
+        return !!value.length;
+    }
+
+    if (value === undefined || value === null) {
+        return false;
+    }
+
+    return !!String(value).trim().length;
+});
+
+var min$1 = (function (value, _ref) {
+    var _ref2 = slicedToArray(_ref, 1),
+        length = _ref2[0];
 
     if (value === undefined || value === null) {
         return false;
@@ -328,9 +366,8 @@ var min$1 = (function (value, _ref) {
 });
 
 var max$1 = (function (value, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var length = _ref2[0];
+    var _ref2 = slicedToArray(_ref, 1),
+        length = _ref2[0];
 
     if (value === undefined || value === null) {
         return length >= 0;
@@ -355,9 +392,8 @@ var ext$1 = (function (files, extensions) {
 });
 
 var size$1 = (function (files, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
-
-    var size = _ref2[0];
+    var _ref2 = slicedToArray(_ref, 1),
+        size = _ref2[0];
 
     if (isNaN(size)) {
         return false;
@@ -383,14 +419,6 @@ var image$1 = (function (files) {
     return true;
 });
 
-var between$1 = (function (value, _ref) {
-  var _ref2 = slicedToArray(_ref, 2);
-
-  var min = _ref2[0];
-  var max = _ref2[1];
-  return Number(min) <= value && Number(max) >= value;
-});
-
 var url$1 = (function (value, params) {
     var isUrl = /^https?:\/\/([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w\.\(\)%-]*)*\/?$/.test(value);
 
@@ -408,6 +436,7 @@ var password$1 = (function (value) {
   );
 });
 
+/* eslint-disable camelcase */
 // import In from './in';
 // import not_in from './notIn'; // eslint-disable-line
 // import alpha from './alpha'; // eslint-disable-line
@@ -421,29 +450,29 @@ var password$1 = (function (value) {
 // import confirmed from './confirmed';
 // import decimal from './decimal';
 var Rules = {
-  email: email$1,
-  min: min$1,
-  max: max$1,
-  required: required$1,
-  // in: In,
-  // not_in,
-  // alpha,
-  // alpha_num,
-  // alpha_dash,
-  numeric: numeric$1,
-  // regex,
-  // ip,
-  ext: ext$1,
-  // mimes,
-  size: size$1,
-  // digits,
-  image: image$1,
-  // dimensions,
-  between: between$1,
-  // confirmed,
-  url: url$1,
-  // decimal,
-  password: password$1
+    email: email$1,
+    min: min$1,
+    max: max$1,
+    required: required$1,
+    // in: In,
+    // not_in,
+    // alpha,
+    // alpha_num,
+    // alpha_dash,
+    numeric: numeric$1,
+    // regex,
+    // ip,
+    ext: ext$1,
+    // mimes,
+    size: size$1,
+    // digits,
+    image: image$1,
+    // dimensions,
+    between: between$1,
+    // confirmed,
+    url: url$1,
+    // decimal,
+    password: password$1
 };
 
 var ErrorBag = function () {
@@ -687,6 +716,68 @@ var _class = function () {
     return _class;
 }();
 
+/**
+ * Determines the input field scope.
+ */
+var getScope = function getScope(el) {
+    return el.dataset.scope || el.form && el.form.dataset.scope;
+};
+
+/**
+ * Debounces a function.
+ */
+var debounce = function debounce(func) {
+    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
+    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    if (!threshold) {
+        return func;
+    }
+
+    var timeout = void 0;
+
+    return function debounced(_ref) {
+        var _ref2 = toArray(_ref),
+            args = _ref2;
+
+        var obj = this;
+
+        function delayed() {
+            if (!execAsap) {
+                func.apply(obj, args);
+            }
+            timeout = null;
+        }
+
+        if (timeout) {
+            clearTimeout(timeout);
+        } else if (execAsap) {
+            func.apply.apply(func, [obj].concat(toConsumableArray(args)));
+        }
+
+        timeout = setTimeout(delayed, threshold || 100);
+    };
+};
+
+/**
+ * Emits a warning to the console.
+ */
+var warn = function warn(message) {
+    if (!console) {
+        return;
+    }
+
+    console.warn('vee-validate: ' + message); // eslint-disable-line
+};
+
+/**
+ * Checks if the value is an object.
+ */
+// eslint-disable-next-line
+var isObject = function isObject(object) {
+    return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
+};
+
 /* eslint-disable prefer-rest-params */
 var Dictionary = function () {
     function Dictionary() {
@@ -764,59 +855,28 @@ var Dictionary = function () {
             this.dictionary[locale].attributes[key] = attribute;
         }
     }, {
-        key: '_isObject',
-        value: function _isObject(object) {
-            return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object) && object !== null;
-        }
-    }, {
         key: '_merge',
         value: function _merge(target, source) {
             var _this = this;
 
-            if (!(this._isObject(target) && this._isObject(source))) {
+            if (!(isObject(target) && isObject(source))) {
                 return target;
             }
 
-            var assign = Object.assign || this._assign;
-
             Object.keys(source).forEach(function (key) {
-                if (_this._isObject(source[key])) {
+                if (isObject(source[key])) {
                     if (!target[key]) {
-                        assign(target, defineProperty({}, key, {}));
+                        _extends(target, defineProperty({}, key, {}));
                     }
 
                     _this._merge(target[key], source[key]);
                     return;
                 }
 
-                assign(target, defineProperty({}, key, source[key]));
+                _extends(target, defineProperty({}, key, source[key]));
             });
 
             return target;
-        }
-    }, {
-        key: '_assign',
-        value: function _assign(target) {
-            var _arguments = arguments;
-
-            var output = Object(target);
-
-            var _loop = function _loop(index) {
-                var source = _arguments[index];
-                if (source !== undefined && source !== null) {
-                    Object.keys(source).forEach(function (key) {
-                        if ({}.hasOwnProperty.call(source, key)) {
-                            output[key] = source[key];
-                        }
-                    });
-                }
-            };
-
-            for (var index = 1; index < arguments.length; index++) {
-                _loop(index);
-            }
-
-            return output;
         }
     }]);
     return Dictionary;
@@ -825,166 +885,110 @@ var Dictionary = function () {
 /* istanbul ignore next */
 /* eslint-disable max-len */
 var messages = {
-  alpha_dash: function alpha_dash(field) {
-    return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
-  },
-  alpha_num: function alpha_num(field) {
-    return 'The ' + field + ' may only contain alpha-numeric characters.';
-  },
-  alpha: function alpha(field) {
-    return 'The ' + field + ' may only contain alphabetic characters.';
-  },
-  between: function between(field, _ref) {
-    var _ref2 = slicedToArray(_ref, 2);
+    alpha_dash: function alpha_dash(field) {
+        return 'The ' + field + ' may contain alpha-numeric characters as well as dashes and underscores.';
+    },
+    alpha_num: function alpha_num(field) {
+        return 'The ' + field + ' may only contain alpha-numeric characters.';
+    },
+    alpha: function alpha(field) {
+        return 'The ' + field + ' may only contain alphabetic characters.';
+    },
+    between: function between(field, _ref) {
+        var _ref2 = slicedToArray(_ref, 2),
+            min = _ref2[0],
+            max = _ref2[1];
 
-    var min = _ref2[0];
-    var max = _ref2[1];
-    return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
-  },
-  confirmed: function confirmed(field, _ref3) {
-    var _ref4 = slicedToArray(_ref3, 1);
+        return 'The ' + field + ' must be between ' + min + ' and ' + max + '.';
+    },
+    confirmed: function confirmed(field, _ref3) {
+        var _ref4 = slicedToArray(_ref3, 1),
+            confirmedField = _ref4[0];
 
-    var confirmedField = _ref4[0];
-    return 'The ' + field + ' does not match the ' + confirmedField + '.';
-  },
-  decimal: function decimal(field) {
-    var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'];
+        return 'The ' + field + ' does not match the ' + confirmedField + '.';
+    },
+    decimal: function decimal(field) {
+        var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ['*'],
+            _ref6 = slicedToArray(_ref5, 1),
+            decimals = _ref6[0];
 
-    var _ref6 = slicedToArray(_ref5, 1);
+        return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
+    },
+    digits: function digits(field, _ref7) {
+        var _ref8 = slicedToArray(_ref7, 1),
+            length = _ref8[0];
 
-    var decimals = _ref6[0];
-    return 'The ' + field + ' must be numeric and may contain ' + (decimals === '*' ? '' : decimals) + ' decimal points.';
-  },
-  digits: function digits(field, _ref7) {
-    var _ref8 = slicedToArray(_ref7, 1);
+        return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
+    },
+    dimensions: function dimensions(field, _ref9) {
+        var _ref10 = slicedToArray(_ref9, 2),
+            width = _ref10[0],
+            height = _ref10[1];
 
-    var length = _ref8[0];
-    return 'The ' + field + ' must be numeric and exactly contain ' + length + ' digits.';
-  },
-  dimensions: function dimensions(field, _ref9) {
-    var _ref10 = slicedToArray(_ref9, 2);
+        return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
+    },
+    email: function email(field) {
+        return 'The ' + field + ' must be a valid email.';
+    },
+    ext: function ext(field) {
+        return 'The ' + field + ' must be a valid file.';
+    },
+    image: function image(field) {
+        return 'The ' + field + ' must be an image.';
+    },
+    in: function _in(field) {
+        return 'The ' + field + ' must be a valid value.';
+    },
+    ip: function ip(field) {
+        return 'The ' + field + ' must be a valid ip address.';
+    },
+    max: function max(field, _ref11) {
+        var _ref12 = slicedToArray(_ref11, 1),
+            length = _ref12[0];
 
-    var width = _ref10[0];
-    var height = _ref10[1];
-    return 'The ' + field + ' must be ' + width + ' pixels by ' + height + ' pixels.';
-  },
-  email: function email(field) {
-    return 'The ' + field + ' must be a valid email.';
-  },
-  ext: function ext(field) {
-    return 'The ' + field + ' must be a valid file.';
-  },
-  image: function image(field) {
-    return 'The ' + field + ' must be an image.';
-  },
-  in: function _in(field) {
-    return 'The ' + field + ' must be a valid value.';
-  },
-  ip: function ip(field) {
-    return 'The ' + field + ' must be a valid ip address.';
-  },
-  max: function max(field, _ref11) {
-    var _ref12 = slicedToArray(_ref11, 1);
+        return 'The ' + field + ' may not be greater than ' + length + ' characters.';
+    },
+    mimes: function mimes(field) {
+        return 'The ' + field + ' must have a valid file type.';
+    },
+    min: function min(field, _ref13) {
+        var _ref14 = slicedToArray(_ref13, 1),
+            length = _ref14[0];
 
-    var length = _ref12[0];
-    return 'The ' + field + ' may not be greater than ' + length + ' characters.';
-  },
-  mimes: function mimes(field) {
-    return 'The ' + field + ' must have a valid file type.';
-  },
-  min: function min(field, _ref13) {
-    var _ref14 = slicedToArray(_ref13, 1);
+        return 'The ' + field + ' must be at least ' + length + ' characters.';
+    },
+    not_in: function not_in(field) {
+        return 'The ' + field + ' must be a valid value.';
+    },
+    numeric: function numeric(field) {
+        return 'The ' + field + ' may only contain numeric characters.';
+    },
+    regex: function regex(field) {
+        return 'The ' + field + ' format is invalid.';
+    },
+    required: function required(field) {
+        return 'The ' + field + ' is required.';
+    },
+    size: function size(field, _ref15) {
+        var _ref16 = slicedToArray(_ref15, 1),
+            _size = _ref16[0];
 
-    var length = _ref14[0];
-    return 'The ' + field + ' must be at least ' + length + ' characters.';
-  },
-  not_in: function not_in(field) {
-    return 'The ' + field + ' must be a valid value.';
-  },
-  numeric: function numeric(field) {
-    return 'The ' + field + ' may only contain numeric characters.';
-  },
-  regex: function regex(field) {
-    return 'The ' + field + ' format is invalid.';
-  },
-  required: function required(field) {
-    return 'The ' + field + ' is required.';
-  },
-  size: function size(field, _ref15) {
-    var _ref16 = slicedToArray(_ref15, 1);
-
-    var _size = _ref16[0];
-    return 'The ' + field + ' must be less than ' + _size + ' KB.';
-  },
-  url: function url(field) {
-    return 'The ' + field + ' is not a valid URL.';
-  },
-  password: function password(field) {
-    return field + ' must be Minimum 8 characters and at least 1 Alphabet and 1 Number.';
-  }
-};
-
-/**
- * Determines the input field scope.
- */
-var getScope = function getScope(el) {
-    return el.dataset.scope || el.form && el.form.dataset.scope;
-};
-
-/**
- * Debounces a function.
- */
-var debounce = function debounce(func) {
-    var threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
-    var execAsap = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-    if (!threshold) {
-        return func;
+        return 'The ' + field + ' must be less than ' + _size + ' KB.';
+    },
+    url: function url(field) {
+        return 'The ' + field + ' is not a valid URL.';
+    },
+    password: function password(field) {
+        return field + ' must be Minimum 8 characters and at least 1 Alphabet and 1 Number.';
     }
 
-    var timeout = void 0;
-
-    return function debounced(_ref) {
-        var _ref2 = toArray(_ref);
-
-        var args = _ref2;
-
-        var obj = this;
-
-        function delayed() {
-            if (!execAsap) {
-                func.apply(obj, args);
-            }
-            timeout = null;
-        }
-
-        if (timeout) {
-            clearTimeout(timeout);
-        } else if (execAsap) {
-            func.apply.apply(func, [obj].concat(toConsumableArray(args)));
-        }
-
-        timeout = setTimeout(delayed, threshold || 100);
-    };
-};
-
-/**
- * Emits a warning to the console.
- */
-var warn = function warn(message) {
-    if (!console) {
-        return;
-    }
-
-    console.warn("vee-validate: " + message); // eslint-disable-line
 };
 
 var after$1 = (function (moment) {
     return function (value, _ref) {
-        var _ref2 = slicedToArray(_ref, 2);
-
-        var targetField = _ref2[0];
-        var format = _ref2[1];
+        var _ref2 = slicedToArray(_ref, 2),
+            targetField = _ref2[0],
+            format = _ref2[1];
 
         var dateValue = moment(value, format, true);
         var field = document.querySelector("input[name='" + targetField + "']");
@@ -1005,10 +1009,9 @@ var after$1 = (function (moment) {
 
 var before$1 = (function (moment) {
     return function (value, _ref) {
-        var _ref2 = slicedToArray(_ref, 2);
-
-        var targetField = _ref2[0];
-        var format = _ref2[1];
+        var _ref2 = slicedToArray(_ref, 2),
+            targetField = _ref2[0],
+            format = _ref2[1];
 
         var dateValue = moment(value, format, true);
         var field = document.querySelector("input[name='" + targetField + "']");
@@ -1029,20 +1032,19 @@ var before$1 = (function (moment) {
 
 var date_format$1 = (function (moment) {
   return function (value, _ref) {
-    var _ref2 = slicedToArray(_ref, 1);
+    var _ref2 = slicedToArray(_ref, 1),
+        format = _ref2[0];
 
-    var format = _ref2[0];
     return moment(value, format, true).isValid();
   };
 });
 
 var date_between$1 = (function (moment) {
     return function (value, _ref) {
-        var _ref2 = slicedToArray(_ref, 3);
-
-        var min = _ref2[0];
-        var max = _ref2[1];
-        var format = _ref2[2];
+        var _ref2 = slicedToArray(_ref, 3),
+            min = _ref2[0],
+            max = _ref2[1],
+            format = _ref2[2];
 
         var minDate = moment(min, format, true);
         var maxDate = moment(max, format, true);
@@ -1060,28 +1062,28 @@ var date_between$1 = (function (moment) {
 /* eslint-disable max-len */
 var messages$1 = {
     after: function after(field, _ref) {
-        var _ref2 = slicedToArray(_ref, 1);
+        var _ref2 = slicedToArray(_ref, 1),
+            target = _ref2[0];
 
-        var target = _ref2[0];
         return "The " + field + " must be after " + target + ".";
     },
     before: function before(field, _ref3) {
-        var _ref4 = slicedToArray(_ref3, 1);
+        var _ref4 = slicedToArray(_ref3, 1),
+            target = _ref4[0];
 
-        var target = _ref4[0];
         return "The " + field + " must be before " + target + ".";
     },
     date_between: function date_between(field, _ref5) {
-        var _ref6 = slicedToArray(_ref5, 2);
+        var _ref6 = slicedToArray(_ref5, 2),
+            min = _ref6[0],
+            max = _ref6[1];
 
-        var min = _ref6[0];
-        var max = _ref6[1];
         return "The " + field + " must be between " + min + " and " + max + ".";
     },
     date_format: function date_format(field, _ref7) {
-        var _ref8 = slicedToArray(_ref7, 1);
+        var _ref8 = slicedToArray(_ref7, 1),
+            format = _ref8[0];
 
-        var format = _ref8[0];
         return "The " + field + " must be in the format " + format + ".";
     }
 };
@@ -1099,545 +1101,774 @@ var date = {
     installed: false
 };
 
+var FieldBag = function () {
+    function FieldBag() {
+        classCallCheck(this, FieldBag);
+
+        this.fields = {};
+    }
+
+    /**
+     * Initializes and adds a new field to the bag.
+     */
+
+
+    createClass(FieldBag, [{
+        key: '_add',
+        value: function _add(name) {
+            this.fields[name] = {};
+            this._setFlags(name, { dirty: false, valid: false }, true);
+        }
+
+        /**
+         * Remooves a field from the bag.
+         */
+
+    }, {
+        key: '_remove',
+        value: function _remove(name) {
+            delete this.fields[name];
+        }
+
+        /**
+         * Resets the flags state for a specified field or all fields.
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset(name) {
+            var _this = this;
+
+            if (!name) {
+                Object.keys(this.fields).forEach(function (field) {
+                    _this._setFlags(field, { dirty: false, valid: false }, true);
+                });
+
+                return;
+            }
+
+            this._setFlags(name, { dirty: false, valid: false }, true);
+        }
+
+        /**
+         * Sets the flags for a specified field.
+         */
+
+    }, {
+        key: '_setFlags',
+        value: function _setFlags(name, flags) {
+            var _this2 = this;
+
+            var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            return Object.keys(flags).every(function (flag) {
+                return _this2._setFlag(name, flag, flags[flag], initial);
+            });
+        }
+
+        /**
+         * Sets a flag for a specified field.
+         */
+
+    }, {
+        key: '_setFlag',
+        value: function _setFlag(name, flag, value) {
+            var initial = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+            var method = 'set' + flag.charAt(0).toUpperCase() + flag.slice(1);
+            if (typeof this[method] !== 'function') {
+                return false;
+            }
+
+            this[method](name, value, initial);
+
+            return true;
+        }
+
+        /**
+         * Sets the dirty flag along with dependant flags.
+         */
+
+    }, {
+        key: 'setDirty',
+        value: function setDirty(name, value) {
+            var initial = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+            this.fields[name].dirty = value;
+            this.fields[name].clean = initial || !value;
+            this.fields[name].passed = this.fields[name].valid && value;
+            this.fields[name].failed = !this.fields[name].valid && value;
+        }
+
+        /**
+         * Sets the valid flag along with dependant flags.
+         */
+
+    }, {
+        key: 'setValid',
+        value: function setValid(name, value) {
+            this.fields[name].valid = value;
+            this.fields[name].passed = this.fields[name].dirty && value;
+            this.fields[name].failed = this.fields[name].dirty && !value;
+        }
+
+        /**
+         * Gets a field flag value.
+         */
+
+    }, {
+        key: '_getFieldFlag',
+        value: function _getFieldFlag(name, flag) {
+            if (this.fields[name]) {
+                return this.fields[name][flag];
+            }
+
+            return false;
+        }
+    }, {
+        key: 'dirty',
+        value: function dirty(name) {
+            var _this3 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).some(function (field) {
+                    return _this3.fields[field].dirty;
+                });
+            }
+
+            return this._getFieldFlag(name, 'dirty');
+        }
+    }, {
+        key: 'valid',
+        value: function valid(name) {
+            var _this4 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).every(function (field) {
+                    return _this4.fields[field].valid;
+                });
+            }
+
+            return this._getFieldFlag(name, 'valid');
+        }
+    }, {
+        key: 'passed',
+        value: function passed(name) {
+            var _this5 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).every(function (field) {
+                    return _this5.fields[field].passed;
+                });
+            }
+
+            return this._getFieldFlag(name, 'passed');
+        }
+    }, {
+        key: 'failed',
+        value: function failed(name) {
+            var _this6 = this;
+
+            if (!name) {
+                return Object.keys(this.fields).some(function (field) {
+                    return _this6.fields[field].failed;
+                });
+            }
+
+            return this._getFieldFlag(name, 'failed');
+        }
+    }, {
+        key: 'clean',
+        value: function clean(name) {
+            if (!name) {
+                return !this.dirty();
+            }
+
+            return this._getFieldFlag(name, 'clean');
+        }
+    }]);
+    return FieldBag;
+}();
+
 var EVENT_NAME = 'veeValidate';
 var DEFAULT_LOCALE = 'en';
-
 var dictionary = new Dictionary({
-  en: {
-    messages: messages,
-    attributes: {}
-  }
+    en: {
+        messages: messages,
+        attributes: {}
+    }
 });
 
 var Validator = function () {
-  function Validator(validations, $vm) {
-    classCallCheck(this, Validator);
+    function Validator(validations, $vm) {
+        classCallCheck(this, Validator);
 
-    this.locale = DEFAULT_LOCALE;
-    this.$fields = {};
-    this._createFields(validations);
-    this.errorBag = new ErrorBag();
-    this.$vm = $vm;
+        this.locale = DEFAULT_LOCALE;
+        this.$fields = {};
+        this.fieldBag = new FieldBag();
+        this._createFields(validations);
+        this.errorBag = new ErrorBag();
+        this.$vm = $vm;
 
-    // if momentjs is present, install the validators.
-    if (typeof moment === 'function') {
-      // eslint-disable-next-line
-      this.installDateTimeValidators(moment);
-    }
-  }
-
-  /**
-   * Sets the default locale for all validators.
-   *
-   * @param {String} language The locale id.
-   */
-
-
-  createClass(Validator, [{
-    key: 'installDateTimeValidators',
-
-
-    /**
-     * Just an alias to the static method for convienece.
-     */
-    value: function installDateTimeValidators(moment) {
-      Validator.installDateTimeValidators(moment);
+        // if momentjs is present, install the validators.
+        if (typeof moment === 'function') {
+            // eslint-disable-next-line
+            this.installDateTimeValidators(moment);
+        }
     }
 
     /**
-     * Updates the dicitionary, overwriting existing values and adding new ones.
+     * Sets the default locale for all validators.
      *
-     * @param  {object} data The dictionary object.
-    =     */
-
-  }, {
-    key: 'setLocale',
-
-
-    /**
-     * Sets the validator current langauge.
-     *
-     * @param {string} language locale or language id.
-     */
-    value: function setLocale(language) {
-      /* istanbul ignore if */
-      if (!dictionary.hasLocale(language)) {
-        // eslint-disable-next-line
-        warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-      }
-
-      this.locale = language;
-    }
-
-    /**
-     * Registers a field to be validated.
-     *
-     * @param  {string} name The field name.
-     * @param  {string} checks validations expression.
-     * @param {string} prettyName Custom name to be used as field name in error messages.
+     * @param {String} language The locale id.
      */
 
-  }, {
-    key: 'attach',
-    value: function attach(name, checks) {
-      var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-      this.errorBag.remove(name);
-      this._createField(name, checks);
+    createClass(Validator, [{
+        key: 'installDateTimeValidators',
 
-      if (prettyName) {
-        this.$fields[name].name = prettyName;
-      }
-    }
 
-    /**
-     * Updates the messages dicitionary, overwriting existing values and adding new ones.
-     *
-     * @param  {object} data The messages object.
-     */
-
-  }, {
-    key: 'updateDictionary',
-    value: function updateDictionary(data) {
-      Validator.updateDictionary(data);
-    }
-
-    /**
-     * Removes a field from the validator.
-     *
-     * @param  {string} name The name of the field.
-     */
-
-  }, {
-    key: 'detach',
-    value: function detach(name) {
-      delete this.$fields[name];
-    }
-
-    /**
-     * Adds a custom validator to the list of validation rules.
-     *
-     * @param  {string} name The name of the validator.
-     * @param  {object|function} validator The validator object/function.
-     */
-
-  }, {
-    key: 'extend',
-    value: function extend(name, validator) {
-      Validator.extend(name, validator);
-    }
-
-    /**
-     * Validates each value against the corresponding field validations.
-     * @param  {object} values The values to be validated.
-     * @return {boolean|Promise|void} result Returns a boolean or a promise that will
-     * resolve to a boolean.
-     */
-
-  }, {
-    key: 'validateAll',
-    value: function validateAll(values) {
-      var _this = this;
-
-      /* istanbul ignore if */
-      if (this.$vm && (!values || typeof values === 'string')) {
-        this.errorBag.clear(values);
-        this.$vm.$emit(EVENT_NAME, values);
-
-        return;
-      }
-
-      var test = true;
-      var promises = [];
-      this.errorBag.clear();
-      Object.keys(values).forEach(function (property) {
-        var result = _this.validate(property, values[property]);
-        if (typeof result.then === 'function') {
-          promises.push(result);
-          return;
+        /**
+         * Just an alias to the static method for convienece.
+         */
+        value: function installDateTimeValidators(moment) {
+            Validator.installDateTimeValidators(moment);
         }
 
-        test = test && result;
-      });
+        /**
+         * Updates the dicitionary, overwriting existing values and adding new ones.
+         *
+         * @param  {object} data The dictionary object.
+        =     */
 
-      if (promises.length) {
-        // eslint-disable-next-line
-        return Promise.all(promises).then(function (values) {
-          return values.every(function (t) {
-            return t;
-          }) && test;
-        });
-      }
+    }, {
+        key: 'setLocale',
 
-      return test; // eslint-disable-line
-    }
 
-    /**
-     * Validates a value against a registered field validations.
-     *
-     * @param  {string} name the field name.
-     * @param  {*} value The value to be validated.
-     * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
-     *  a boolean.
-     */
+        /**
+         * Sets the validator current langauge.
+         *
+         * @param {string} language locale or language id.
+         */
+        value: function setLocale(language) {
+            /* istanbul ignore if */
+            if (!dictionary.hasLocale(language)) {
+                // eslint-disable-next-line
+                warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            }
 
-  }, {
-    key: 'validate',
-    value: function validate(name, value, scope) {
-      var _this2 = this;
-
-      if (!this.$fields[name]) {
-        warn('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
-
-        return false;
-      }
-
-      this.errorBag.remove(name, scope);
-      // if its not required and is empty or null or undefined then it passes.
-      if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
-        return true;
-      }
-
-      var test = true;
-      var promises = [];
-      this.$fields[name].validations.forEach(function (rule) {
-        var result = _this2._test(name, value, rule, scope);
-        if (typeof result.then === 'function') {
-          promises.push(result);
-          return;
+            this.locale = language;
         }
 
-        test = test && result;
-      });
+        /**
+         * Registers a field to be validated.
+         *
+         * @param  {string} name The field name.
+         * @param  {string} checks validations expression.
+         * @param {string} prettyName Custom name to be used as field name in error messages.
+         */
 
-      if (promises.length) {
-        return Promise.all(promises).then(function (values) {
-          return values.every(function (t) {
-            return t;
-          }) && test;
-        });
-      }
+    }, {
+        key: 'attach',
+        value: function attach(name, checks) {
+            var prettyName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-      return test;
-    }
+            this.errorBag.remove(name);
+            this._createField(name, checks);
 
-    /**
-     * Creates the fields to be validated.
-     *
-     * @param  {object} validations
-     * @return {object} Normalized object.
-     */
-
-  }, {
-    key: '_createFields',
-    value: function _createFields(validations) {
-      var _this3 = this;
-
-      if (!validations) {
-        return;
-      }
-
-      Object.keys(validations).forEach(function (property) {
-        _this3._createField(property, validations[property]);
-      });
-    }
-
-    /**
-     * Creates a field entry in the fields object.
-     * @param {String} name.
-     * @param {String} Checks.
-     */
-
-  }, {
-    key: '_createField',
-    value: function _createField(name, checks) {
-      var _this4 = this;
-
-      if (!this.$fields[name]) {
-        this.$fields[name] = {};
-      }
-
-      this.$fields[name].validations = [];
-
-      if (Array.isArray(checks)) {
-        this.$fields[name].validations = checks;
-
-        return;
-      }
-
-      checks.split('|').forEach(function (rule) {
-        var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
-        if (normalizedRule.name === 'required') {
-          _this4.$fields[name].required = true;
+            if (prettyName) {
+                this.$fields[name].name = prettyName;
+            }
         }
 
-        _this4.$fields[name].validations.push(normalizedRule);
-      });
-    }
+        /**
+         * Updates the messages dicitionary, overwriting existing values and adding new ones.
+         *
+         * @param  {object} data The messages object.
+         */
 
-    /**
-     * Normalizes a single validation object.
-     *
-     * @param  {string} rule The rule to be normalized.
-     * @return {object} rule The normalized rule.
-     */
-
-  }, {
-    key: '_normalizeRule',
-    value: function _normalizeRule(rule, validations) {
-      var params = [];
-      var name = rule.split(':')[0];
-      if (~rule.indexOf(':')) {
-        params = rule.split(':')[1].split(',');
-      }
-
-      // Those rules need the date format to parse and compare correctly.
-      if (date.installed && ~['after', 'before', 'date_between'].indexOf(name)) {
-        var dateFormat = validations.filter(function (v) {
-          return v.name === 'date_format';
-        })[0];
-        if (dateFormat) {
-          // pass it as the last param.
-          params.push(dateFormat.params[0]);
+    }, {
+        key: 'updateDictionary',
+        value: function updateDictionary(data) {
+            Validator.updateDictionary(data);
         }
-      }
 
-      return {
-        name: name,
-        params: params
-      };
-    }
+        /**
+         * Removes a field from the validator.
+         *
+         * @param  {string} name The name of the field.
+         */
 
-    /**
-     * Formats an error message for field and a rule.
-     *
-     * @param  {string} field The field name.
-     * @param  {object} rule Normalized rule object.
-     * @return {string} msg Formatted error message.
-     */
+    }, {
+        key: 'detach',
+        value: function detach(name) {
+            /* istanbul ignore if */
+            if (this.$vm && typeof this.$vm.$emit === 'function') {
+                this.$vm.$emit('VALIDATOR_OFF', name);
+            }
 
-  }, {
-    key: '_formatErrorMessage',
-    value: function _formatErrorMessage(field, rule) {
-      if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
-        // Default to english message.
-        return dictionary.getMessage('en', rule.name)(field, rule.params);
-      }
-
-      return dictionary.getMessage(this.locale, rule.name)(field, rule.params);
-    }
-
-    /**
-     * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
-     * Then the dictionary, then fallsback to field name.
-     * @return {String} displayName The name to be used in the errors.
-     */
-
-  }, {
-    key: '_getFieldDisplayName',
-    value: function _getFieldDisplayName(field) {
-      return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
-    }
-
-    /**
-     * Tests a single input value against a rule.
-     *
-     * @param  {*} name The name of the field.
-     * @param  {*} value  [description]
-     * @param  {object} rule the rule object.
-     * @return {boolean} Wether if it passes the check.
-     */
-
-  }, {
-    key: '_test',
-    value: function _test(name, value, rule, scope) {
-      var _this5 = this;
-
-      if (!Rules[rule.name]) {
-        throw new Error('there is no rule named ' + name + ' in ./rules, please add');
-      }
-      var validator = Rules[rule.name];
-      var valid = validator(value, rule.params);
-      var displayName = this._getFieldDisplayName(name);
-
-      if (typeof valid.then === 'function') {
-        return valid.then(function (values) {
-          var allValid = Array.isArray(values) ? values.every(function (t) {
-            return t.valid;
-          }) : values.valid;
-
-          if (!allValid) {
-            _this5.errorBag.add(name, _this5._formatErrorMessage(displayName, rule), scope);
-          }
-
-          return allValid;
-        });
-      }
-
-      if (!valid) {
-        this.errorBag.add(name, this._formatErrorMessage(displayName, rule), scope);
-      }
-
-      return valid;
-    }
-
-    /**
-     * Gets the internal errorBag instance.
-     *
-     * @return {ErrorBag} errorBag The internal error bag object.
-     */
-
-  }, {
-    key: 'getErrors',
-    value: function getErrors() {
-      return this.errorBag;
-    }
-  }], [{
-    key: 'setDefaultLocale',
-    value: function setDefaultLocale() {
-      var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
-
-      /* istanbul ignore if */
-      if (!dictionary.hasLocale(language)) {
-        // eslint-disable-next-line
-        warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
-      }
-
-      DEFAULT_LOCALE = language;
-    }
-
-    /**
-     * Installs the datetime validators and the messages.
-     */
-
-  }, {
-    key: 'installDateTimeValidators',
-    value: function installDateTimeValidators(moment) {
-      if (typeof moment !== 'function') {
-        warn('To use the date-time validators you must provide moment reference.');
-
-        return false;
-      }
-
-      if (date.installed) {
-        return true;
-      }
-
-      var validators = date.make(moment);
-      Object.keys(validators).forEach(function (name) {
-        Validator.extend(name, validators[name]);
-      });
-
-      Validator.updateDictionary({
-        en: {
-          messages: date.messages
+            delete this.$fields[name];
+            this.fieldBag._remove(name);
         }
-      });
-      date.installed = true;
 
-      return true;
-    }
-  }, {
-    key: 'updateDictionary',
-    value: function updateDictionary(data) {
-      dictionary.merge(data);
-    }
+        /**
+         * Adds a custom validator to the list of validation rules.
+         *
+         * @param  {string} name The name of the validator.
+         * @param  {object|function} validator The validator object/function.
+         */
 
-    /**
-     * Static constructor.
-     *
-     * @param  {object} validations The validations object.
-     * @return {Validator} validator A validator object.
-     */
+    }, {
+        key: 'extend',
+        value: function extend(name, validator) {
+            Validator.extend(name, validator);
+        }
 
-  }, {
-    key: 'create',
-    value: function create(validations, $vm) {
-      return new Validator(validations, $vm);
-    }
+        /**
+         * Validates each value against the corresponding field validations.
+         * @param  {object} values The values to be validated.
+         * @return {boolean|Promise|void} result Returns a boolean or a promise that will
+         * resolve to a boolean.
+         */
 
-    /**
-     * Adds a custom validator to the list of validation rules.
-     *
-     * @param  {string} name The name of the validator.
-     * @param  {object|function} validator The validator object/function.
-     */
+    }, {
+        key: 'validateAll',
+        value: function validateAll(values) {
+            var _this = this;
 
-  }, {
-    key: 'extend',
-    value: function extend(name, validator) {
-      Validator._guardExtend(name, validator);
-      Validator._merge(name, validator);
-    }
+            /* istanbul ignore if */
+            if (this.$vm && (!values || typeof values === 'string')) {
+                this.errorBag.clear(values);
+                this.$vm.$emit(EVENT_NAME, values);
 
-    /**
-     * Merges a validator object into the Rules and Messages.
-     *
-     * @param  {string} name The name of the validator.
-     * @param  {function|object} validator The validator object.
-     */
+                return;
+            }
 
-  }, {
-    key: '_merge',
-    value: function _merge(name, validator) {
-      if (typeof validator === 'function') {
-        Rules[name] = validator;
-        dictionary.setMessage('en', name, function (field) {
-          return 'The ' + field + ' value is not valid.';
-        });
-        return;
-      }
+            var test = true;
+            var promises = [];
+            this.errorBag.clear();
+            Object.keys(values).forEach(function (property) {
+                var result = _this.validate(property, values[property]);
+                if (typeof result.then === 'function') {
+                    promises.push(result);
+                    return;
+                }
 
-      Rules[name] = validator.validate;
+                test = test && result;
+            });
 
-      if (validator.getMessage && typeof validator.getMessage === 'function') {
-        dictionary.setMessage('en', name, validator.getMessage);
-      }
+            if (promises.length) {
+                // eslint-disable-next-line
+                return Promise.all(promises).then(function (values) {
+                    return values.every(function (t) {
+                        return t;
+                    }) && test;
+                });
+            }
 
-      if (validator.messages) {
-        dictionary.merge(Object.keys(validator.messages).reduce(function (prev, curr) {
-          var dict = prev;
-          dict[curr] = {
-            messages: defineProperty({}, name, validator.messages[curr])
-          };
+            return test; // eslint-disable-line
+        }
 
-          return dict;
-        }, {}));
-      }
-    }
+        /**
+         * Validates a value against a registered field validations.
+         *
+         * @param  {string} name the field name.
+         * @param  {*} value The value to be validated.
+         * @return {boolean|Promise} result returns a boolean or a promise that will resolve to
+         *  a boolean.
+         */
 
-    /**
-     * Guards from extnsion violations.
-     *
-     * @param  {string} name name of the validation rule.
-     * @param  {object} validator a validation rule object.
-     */
+    }, {
+        key: 'validate',
+        value: function validate(name, value, scope) {
+            var _this2 = this;
 
-  }, {
-    key: '_guardExtend',
-    value: function _guardExtend(name, validator) {
-      if (Rules[name]) {
-        throw new _class('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
-      }
+            if (!this.$fields[name]) {
 
-      if (typeof validator === 'function') {
-        return;
-      }
+                warn('Trying to validate a non-existant field: "' + name + '". Use "attach()" first.');
 
-      if (typeof validator.validate !== 'function') {
-        throw new _class(
-        // eslint-disable-next-line
-        'Extension Error: The validator \'' + name + '\' must be a function or have a \'validate\' method.');
-      }
+                return false;
+            }
 
-      if (typeof validator.getMessage !== 'function' && _typeof(validator.messages) !== 'object') {
-        throw new _class(
-        // eslint-disable-next-line
-        'Extension Error: The validator \'' + name + '\' must have a \'getMessage\' method or have a \'messages\' object.');
-      }
-    }
-  }]);
-  return Validator;
+            this.errorBag.remove(name, scope);
+            // if its not required and is empty or null or undefined then it passes.
+            if (!this.$fields[name].required && ~[null, undefined, ''].indexOf(value)) {
+                return true;
+            }
+
+            var test = true;
+            var promises = [];
+            this.$fields[name].validations.forEach(function (rule) {
+                var result = _this2._test(name, value, rule, scope);
+                if (typeof result.then === 'function') {
+                    promises.push(result);
+                    return;
+                }
+
+                test = test && result;
+            });
+
+            if (promises.length) {
+                return Promise.all(promises).then(function (values) {
+                    var valid = values.every(function (t) {
+                        return t;
+                    }) && test;
+                    _this2.fieldBag._setFlags(name, { valid: valid, dirty: true });
+
+                    return valid;
+                });
+            }
+
+            this.fieldBag._setFlags(name, { valid: test, dirty: true });
+
+            return test;
+        }
+
+        /**
+         * Creates the fields to be validated.
+         *
+         * @param  {object} validations
+         * @return {object} Normalized object.
+         */
+
+    }, {
+        key: '_createFields',
+        value: function _createFields(validations) {
+            var _this3 = this;
+
+            if (!validations) {
+                return;
+            }
+
+            Object.keys(validations).forEach(function (field) {
+                _this3._createField(field, validations[field]);
+            });
+        }
+
+        /**
+         * Creates a field entry in the fields object.
+         * @param {String} name.
+         * @param {String} Checks.
+         */
+
+    }, {
+        key: '_createField',
+        value: function _createField(name, checks) {
+            var _this4 = this;
+
+            if (!this.$fields[name]) {
+                this.$fields[name] = {};
+            }
+
+            this.fieldBag._add(name);
+            this.$fields[name].validations = [];
+
+            if (Array.isArray(checks)) {
+                this.$fields[name].validations = checks;
+
+                return;
+            }
+
+            checks.split('|').forEach(function (rule) {
+                var normalizedRule = _this4._normalizeRule(rule, _this4.$fields[name].validations);
+                if (normalizedRule.name === 'required') {
+                    _this4.$fields[name].required = true;
+                }
+
+                _this4.$fields[name].validations.push(normalizedRule);
+            });
+        }
+
+        /**
+         * Normalizes a single validation object.
+         *
+         * @param  {string} rule The rule to be normalized.
+         * @return {object} rule The normalized rule.
+         */
+
+    }, {
+        key: '_normalizeRule',
+        value: function _normalizeRule(rule, validations) {
+            var params = [];
+            var name = rule.split(':')[0];
+            if (~rule.indexOf(':')) {
+                params = rule.split(':')[1].split(',');
+            }
+
+            // Those rules need the date format to parse and compare correctly.
+            if (date.installed && ~['after', 'before', 'date_between'].indexOf(name)) {
+                var dateFormat = validations.filter(function (v) {
+                    return v.name === 'date_format';
+                })[0];
+                if (dateFormat) {
+                    // pass it as the last param.
+                    params.push(dateFormat.params[0]);
+                }
+            }
+
+            return { name: name, params: params };
+        }
+
+        /**
+         * Formats an error message for field and a rule.
+         *
+         * @param  {string} field The field name.
+         * @param  {object} rule Normalized rule object.
+         * @param {object} data Additional Information about the validation result.
+         * @return {string} msg Formatted error message.
+         */
+
+    }, {
+        key: '_formatErrorMessage',
+        value: function _formatErrorMessage(field, rule) {
+            var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+            var name = this._getFieldDisplayName(field);
+            var params = this._getLocalizedParams(rule);
+
+            if (!dictionary.hasLocale(this.locale) || typeof dictionary.getMessage(this.locale, rule.name) !== 'function') {
+                // Default to english message.
+                return dictionary.getMessage('en', rule.name)(name, params, data);
+            }
+
+            return dictionary.getMessage(this.locale, rule.name)(name, params, data);
+        }
+
+        /**
+         * Translates the parameters passed to the rule (mainly for target fields).
+         */
+
+    }, {
+        key: '_getLocalizedParams',
+        value: function _getLocalizedParams(rule) {
+            if (~['after', 'before', 'confirmed'].indexOf(rule.name) && rule.params && rule.params[0]) {
+                return [dictionary.getAttribute(this.locale, rule.params[0], rule.params[0])];
+            }
+
+            return rule.params;
+        }
+
+        /**
+         * Resolves an appropiate display name, first checking 'data-as' or the registered 'prettyName'
+         * Then the dictionary, then fallsback to field name.
+         * @return {String} displayName The name to be used in the errors.
+         */
+
+    }, {
+        key: '_getFieldDisplayName',
+        value: function _getFieldDisplayName(field) {
+            return this.$fields[field].name || dictionary.getAttribute(this.locale, field, field);
+        }
+
+        /**
+         * Tests a single input value against a rule.
+         *
+         * @param  {*} name The name of the field.
+         * @param  {*} value  [description]
+         * @param  {object} rule the rule object.
+         * @return {boolean} Wether if it passes the check.
+         */
+
+    }, {
+        key: '_test',
+        value: function _test(name, value, rule, scope) {
+            var _this5 = this;
+
+            var validator = Rules[rule.name];
+            var result = validator(value, rule.params);
+
+            if (typeof result.then === 'function') {
+                return result.then(function (values) {
+                    var allValid = true;
+                    if (Array.isArray(values)) {
+                        allValid = values.every(function (t) {
+                            return t.valid;
+                        });
+                        if (!allValid) {
+                            _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule), scope);
+                        }
+                    } else {
+                        // Is a single object.
+                        allValid = values.valid;
+                        _this5.errorBag.add(name, _this5._formatErrorMessage(name, rule, values.data), scope);
+                    }
+
+                    return allValid;
+                });
+            }
+
+            if (isObject(result)) {
+                if (!result.valid) {
+                    this.errorBag.add(name, this._formatErrorMessage(name, rule, result.data), scope);
+                }
+
+                return result.valid;
+            }
+
+            if (!result) {
+                this.errorBag.add(name, this._formatErrorMessage(name, rule), scope);
+            }
+
+            return result;
+        }
+
+        /**
+         * Gets the internal errorBag instance.
+         *
+         * @return {ErrorBag} errorBag The internal error bag object.
+         */
+
+    }, {
+        key: 'getErrors',
+        value: function getErrors() {
+            return this.errorBag;
+        }
+    }], [{
+        key: 'setDefaultLocale',
+        value: function setDefaultLocale() {
+            var language = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'en';
+
+            /* istanbul ignore if */
+            if (!dictionary.hasLocale(language)) {
+                // eslint-disable-next-line
+                warn('You are setting the validator locale to a locale that is not defined in the dicitionary. English messages may still be generated.');
+            }
+
+            DEFAULT_LOCALE = language;
+        }
+
+        /**
+         * Installs the datetime validators and the messages.
+         */
+
+    }, {
+        key: 'installDateTimeValidators',
+        value: function installDateTimeValidators(moment) {
+            if (typeof moment !== 'function') {
+                warn('To use the date-time validators you must provide moment reference.');
+
+                return false;
+            }
+
+            if (date.installed) {
+                return true;
+            }
+
+            var validators = date.make(moment);
+            Object.keys(validators).forEach(function (name) {
+                Validator.extend(name, validators[name]);
+            });
+
+            Validator.updateDictionary({
+                en: {
+                    messages: date.messages
+                }
+            });
+            date.installed = true;
+
+            return true;
+        }
+    }, {
+        key: 'updateDictionary',
+        value: function updateDictionary(data) {
+            dictionary.merge(data);
+        }
+
+        /**
+         * Static constructor.
+         *
+         * @param  {object} validations The validations object.
+         * @return {Validator} validator A validator object.
+         */
+
+    }, {
+        key: 'create',
+        value: function create(validations, $vm) {
+            return new Validator(validations, $vm);
+        }
+
+        /**
+         * Adds a custom validator to the list of validation rules.
+         *
+         * @param  {string} name The name of the validator.
+         * @param  {object|function} validator The validator object/function.
+         */
+
+    }, {
+        key: 'extend',
+        value: function extend(name, validator) {
+            Validator._guardExtend(name, validator);
+            Validator._merge(name, validator);
+        }
+
+        /**
+         * Merges a validator object into the Rules and Messages.
+         *
+         * @param  {string} name The name of the validator.
+         * @param  {function|object} validator The validator object.
+         */
+
+    }, {
+        key: '_merge',
+        value: function _merge(name, validator) {
+            if (typeof validator === 'function') {
+                Rules[name] = validator;
+                dictionary.setMessage('en', name, function (field) {
+                    return 'The ' + field + ' value is not valid.';
+                });
+                return;
+            }
+
+            Rules[name] = validator.validate;
+
+            if (validator.getMessage && typeof validator.getMessage === 'function') {
+                dictionary.setMessage('en', name, validator.getMessage);
+            }
+
+            if (validator.messages) {
+                dictionary.merge(Object.keys(validator.messages).reduce(function (prev, curr) {
+                    var dict = prev;
+                    dict[curr] = {
+                        messages: defineProperty({}, name, validator.messages[curr])
+                    };
+
+                    return dict;
+                }, {}));
+            }
+        }
+
+        /**
+         * Guards from extnsion violations.
+         *
+         * @param  {string} name name of the validation rule.
+         * @param  {object} validator a validation rule object.
+         */
+
+    }, {
+        key: '_guardExtend',
+        value: function _guardExtend(name, validator) {
+            if (Rules[name]) {
+                throw new _class('Extension Error: There is an existing validator with the same name \'' + name + '\'.');
+            }
+
+            if (typeof validator === 'function') {
+                return;
+            }
+
+            if (typeof validator.validate !== 'function') {
+                throw new _class(
+                // eslint-disable-next-line
+                'Extension Error: The validator \'' + name + '\' must be a function or have a \'validate\' method.');
+            }
+
+            if (typeof validator.getMessage !== 'function' && _typeof(validator.messages) !== 'object') {
+                throw new _class(
+                // eslint-disable-next-line
+                'Extension Error: The validator \'' + name + '\' must have a \'getMessage\' method or have a \'messages\' object.');
+            }
+        }
+    }]);
+    return Validator;
 }();
 
 /**
@@ -1697,6 +1928,12 @@ var mixin = (function (options) {
         data: function data() {
             return defineProperty({}, options.errorBagName, this.$validator.errorBag);
         },
+
+        computed: defineProperty({}, options.fieldsBagName, {
+            get: function get() {
+                return this.$validator.fieldBag;
+            }
+        }),
         mounted: function mounted() {
             this.$emit('validatorReady');
         },
@@ -1755,6 +1992,7 @@ var ListenerGenerator = function () {
     }, {
         key: '_fileListener',
         value: function _fileListener() {
+
             var isValid = this.vm.$validator.validate(this.fieldName, this.el.files, getScope(this.el));
             if (!isValid && this.binding.modifiers.reject) {
                 // eslint-disable-next-line
@@ -1779,6 +2017,26 @@ var ListenerGenerator = function () {
         }
 
         /**
+         * Validates checkboxes, triggered by change event.
+         */
+
+    }, {
+        key: '_checkboxListener',
+        value: function _checkboxListener() {
+            var _this = this;
+
+            var checkedBoxes = document.querySelectorAll('input[name="' + this.el.name + '"]:checked');
+            if (!checkedBoxes || !checkedBoxes.length) {
+                this.vm.$validator.validate(this.fieldName, null, getScope(this.el));
+                return;
+            }
+
+            [].concat(toConsumableArray(checkedBoxes)).forEach(function (box) {
+                _this.vm.$validator.validate(_this.fieldName, box.value, getScope(_this.el));
+            });
+        }
+
+        /**
          * Returns a scoped callback, only runs if the el scope is the same as the recieved scope
          * From the event.
          */
@@ -1786,10 +2044,10 @@ var ListenerGenerator = function () {
     }, {
         key: '_getScopedListener',
         value: function _getScopedListener(callback) {
-            var _this = this;
+            var _this2 = this;
 
             return function (scope) {
-                if (!scope || scope === getScope(_this.el) || scope instanceof Event) {
+                if (!scope || scope === getScope(_this2.el) || scope instanceof Event) {
                     callback();
                 }
             };
@@ -1802,12 +2060,17 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachValidatorEvent',
         value: function _attachValidatorEvent() {
-            var _this2 = this;
+            var _this3 = this;
 
-            var listener = this._getScopedListener(this.el.type === 'radio' ? this._radioListener.bind(this) : this._inputListener.bind(this));
+            var listener = this._getScopedListener(this._getSuitableListener().listener.bind(this));
 
             this.vm.$on(DEFAULT_EVENT_NAME, listener);
-            this.callbacks.push({ event: DEFAULT_EVENT_NAME, listener: listener });
+            this.callbacks.push({ name: DEFAULT_EVENT_NAME, listener: listener });
+            this.vm.$on('VALIDATOR_OFF', function (field) {
+                if (_this3.fieldName === field) {
+                    _this3.detach();
+                }
+            });
 
             var fieldName = this._hasFieldDependency(this.el.dataset.rules);
             if (fieldName) {
@@ -1821,7 +2084,8 @@ var ListenerGenerator = function () {
                     }
 
                     target.addEventListener('input', listener);
-                    _this2.callbacks.push({ event: 'input', listener: listener, el: target });
+
+                    _this3.callbacks.push({ name: 'input', listener: listener, el: target });
                 });
             }
         }
@@ -1847,6 +2111,13 @@ var ListenerGenerator = function () {
                 };
             }
 
+            if (this.el.type === 'checkbox') {
+                return {
+                    name: 'change',
+                    listener: this._checkboxListener
+                };
+            }
+
             return {
                 name: 'input',
                 listener: this._inputListener
@@ -1860,16 +2131,16 @@ var ListenerGenerator = function () {
     }, {
         key: '_attachFieldListeners',
         value: function _attachFieldListeners() {
-            var _this3 = this;
+            var _this4 = this;
 
             var handler = this._getSuitableListener();
             var listener = debounce(handler.listener.bind(this), this.el.dataset.delay || this.options.delay);
 
-            if (this.el.type === 'radio') {
+            if (~['radio', 'checkbox'].indexOf(this.el.type)) {
                 this.vm.$once('validatorReady', function () {
-                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this3.el.name + '"]'))).forEach(function (input) {
+                    [].concat(toConsumableArray(document.querySelectorAll('input[name="' + _this4.el.name + '"]'))).forEach(function (input) {
                         input.addEventListener(handler.name, listener);
-                        _this3.callbacks.push({ event: handler.name, callback: listener, el: input });
+                        _this4.callbacks.push({ name: handler.name, listener: listener, el: input });
                     });
                 });
 
@@ -1877,7 +2148,7 @@ var ListenerGenerator = function () {
             }
 
             this.el.addEventListener(handler.name, listener);
-            this.callbacks.push({ event: handler.name, callback: listener, el: this.el });
+            this.callbacks.push({ name: handler.name, listener: listener, el: this.el });
         }
 
         /**
@@ -1909,16 +2180,20 @@ var ListenerGenerator = function () {
     }, {
         key: 'detach',
         value: function detach() {
-            this.vm.$off(DEFAULT_EVENT_NAME, this.callbacks.filter(function (_ref) {
-                var event = _ref.event;
-                return event === DEFAULT_EVENT_NAME;
-            })[0]);
+            var _this5 = this;
+
+            this.callbacks.filter(function (_ref) {
+                var name = _ref.name;
+                return name === DEFAULT_EVENT_NAME;
+            }).forEach(function (h) {
+                _this5.vm.$off(DEFAULT_EVENT_NAME, h.listener);
+            });
 
             this.callbacks.filter(function (_ref2) {
-                var event = _ref2.event;
-                return event !== DEFAULT_EVENT_NAME;
+                var name = _ref2.name;
+                return name !== DEFAULT_EVENT_NAME;
             }).forEach(function (h) {
-                h.el.removeEventListener(h.event, h.listener);
+                h.el.removeEventListener(h.name, h.listener);
             });
         }
     }]);
@@ -1937,10 +2212,10 @@ var directive = (function (options) {
             listenersInstances.push({ vm: context, el: el, instance: listener });
         },
         update: function update(el, _ref2, _ref3) {
-            var expression = _ref2.expression;
-            var value = _ref2.value;
-            var modifiers = _ref2.modifiers;
-            var oldValue = _ref2.oldValue;
+            var expression = _ref2.expression,
+                value = _ref2.value,
+                modifiers = _ref2.modifiers,
+                oldValue = _ref2.oldValue;
             var context = _ref3.context;
 
             if (!expression || value === oldValue) {
@@ -1963,46 +2238,45 @@ var directive = (function (options) {
 
 // eslint-disable-next-line
 var install = function install(Vue) {
-  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+        _ref$locale = _ref.locale,
+        locale = _ref$locale === undefined ? 'en' : _ref$locale,
+        _ref$delay = _ref.delay,
+        delay = _ref$delay === undefined ? 0 : _ref$delay,
+        _ref$errorBagName = _ref.errorBagName,
+        errorBagName = _ref$errorBagName === undefined ? 'errors' : _ref$errorBagName,
+        _ref$dictionary = _ref.dictionary,
+        dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
 
-  var _ref$locale = _ref.locale;
-  var locale = _ref$locale === undefined ? 'en' : _ref$locale;
-  var _ref$delay = _ref.delay;
-  var delay = _ref$delay === undefined ? 0 : _ref$delay;
-  var _ref$errorBagName = _ref.errorBagName;
-  var errorBagName = _ref$errorBagName === undefined ? 'errors' : _ref$errorBagName;
-  var _ref$dictionary = _ref.dictionary;
-  var dictionary = _ref$dictionary === undefined ? null : _ref$dictionary;
-
-  if (dictionary) {
-    Validator.updateDictionary(dictionary);
-  }
-
-  Validator.setDefaultLocale(locale);
-
-  var options = {
-    locale: locale,
-    delay: delay,
-    dictionary: dictionary,
-    errorBagName: errorBagName
-  };
-
-  Object.defineProperties(Vue.prototype, {
-    $validator: {
-      get: function get() {
-        return register(this);
-      }
+    if (dictionary) {
+        Validator.updateDictionary(dictionary);
     }
-  });
 
-  Vue.mixin(mixin(options)); // Install Mixin.
-  Vue.directive('validate', directive(options)); // Install directive.
+    Validator.setDefaultLocale(locale);
+
+    var options = {
+        locale: locale,
+        delay: delay,
+        dictionary: dictionary,
+        errorBagName: errorBagName
+    };
+
+    Object.defineProperties(Vue.prototype, {
+        $validator: {
+            get: function get() {
+                return register(this);
+            }
+        }
+    });
+
+    Vue.mixin(mixin(options)); // Install Mixin.
+    Vue.directive('validate', directive(options)); // Install directive.
 };
 
 var index = {
-  install: install,
-  Validator: Validator,
-  ErrorBag: ErrorBag
+    install: install,
+    Validator: Validator,
+    ErrorBag: ErrorBag
 };
 
 return index;

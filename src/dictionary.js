@@ -1,17 +1,18 @@
 /* eslint-disable prefer-rest-params */
-export default class Dictionary
-{
+import { isObject } from './utils/helpers';
+
+export default class Dictionary {
     constructor(dictionary = {}) {
         this.dictionary = {};
         this.merge(dictionary);
     }
 
     hasLocale(locale) {
-        return !! this.dictionary[locale];
+        return !!this.dictionary[locale];
     }
 
     getMessage(locale, key, fallback = '') {
-        if (! this.hasMessage(locale, key)) {
+        if (!this.hasMessage(locale, key)) {
             return fallback;
         }
 
@@ -19,7 +20,7 @@ export default class Dictionary
     }
 
     getAttribute(locale, key, fallback = '') {
-        if (! this.hasAttribute(locale, key)) {
+        if (!this.hasAttribute(locale, key)) {
             return fallback;
         }
 
@@ -27,7 +28,7 @@ export default class Dictionary
     }
 
     hasMessage(locale, key) {
-        return !! (
+        return !!(
             this.hasLocale(locale) &&
             this.dictionary[locale].messages &&
             this.dictionary[locale].messages[key]
@@ -35,7 +36,7 @@ export default class Dictionary
     }
 
     hasAttribute(locale, key) {
-        return !! (
+        return !!(
             this.hasLocale(locale) &&
             this.dictionary[locale].attributes &&
             this.dictionary[locale].attributes[key]
@@ -47,7 +48,7 @@ export default class Dictionary
     }
 
     setMessage(locale, key, message) {
-        if (! this.hasLocale(locale)) {
+        if (!this.hasLocale(locale)) {
             this.dictionary[locale] = {
                 messages: {},
                 attributes: {}
@@ -58,7 +59,7 @@ export default class Dictionary
     }
 
     setAttribute(locale, key, attribute) {
-        if (! this.hasLocale(locale)) {
+        if (!this.hasLocale(locale)) {
             this.dictionary[locale] = {
                 messages: {},
                 attributes: {}
@@ -68,46 +69,29 @@ export default class Dictionary
         this.dictionary[locale].attributes[key] = attribute;
     }
 
-    _isObject(object) {
-        return object && typeof object === 'object' && ! Array.isArray(object) && object !== null;
-    }
 
     _merge(target, source) {
-        if (! (this._isObject(target) && this._isObject(source))) {
+        if (!(isObject(target) && isObject(source))) {
             return target;
         }
 
-        const assign = Object.assign || this._assign;
-
         Object.keys(source).forEach(key => {
-            if (this._isObject(source[key])) {
-                if (! target[key]) {
-                    assign(target, { [key]: {} });
+            if (isObject(source[key])) {
+                if (!target[key]) {
+                    Object.assign(target, {
+                        [key]: {} });
                 }
 
                 this._merge(target[key], source[key]);
                 return;
             }
 
-            assign(target, { [key]: source[key] });
+
+            Object.assign(target, {
+                [key]: source[key] });
         });
 
         return target;
     }
 
-    _assign(target) {
-        const output = Object(target);
-        for (let index = 1; index < arguments.length; index++) {
-            const source = arguments[index];
-            if (source !== undefined && source !== null) {
-                Object.keys(source).forEach(key => {
-                    if ({}.hasOwnProperty.call(source, key)) {
-                        output[key] = source[key];
-                    }
-                });
-            }
-        }
-
-        return output;
-    }
 }

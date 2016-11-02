@@ -1,3 +1,13 @@
+/* eslint-disable camelcase */
+import alpha from './alpha';
+import alpha_dash from './alpha_dash';
+import alpha_num from './alpha_num';
+import alpha_spaces from './alpha_spaces';
+import between from './between';
+import confirmed from './confirmed';
+import decimal from './decimal';
+import digits from './digits';
+import dimensions from './dimensions';
 import email from './email';
 // import In from './in';
 import required from './required';
@@ -16,34 +26,33 @@ import size from './size';
 // import digits from './digits';
 import image from './image';
 // import dimensions from './dimensions';
-import between from './between';
 // import confirmed from './confirmed';
 import url from './url';
 // import decimal from './decimal';
 import password from './password';
 
 export default {
-  email,
-  min,
-  max,
-  required,
-  // in: In,
-  // not_in,
-  // alpha,
-  // alpha_num,
-  // alpha_dash,
-  numeric,
-  // regex,
-  // ip,
-  ext,
-  // mimes,
-  size,
-  // digits,
-  image,
-  // dimensions,
-  between,
-  // confirmed,
-  url,
-  // decimal,
-  password
+    email,
+    min,
+    max,
+    required,
+    // in: In,
+    // not_in,
+    // alpha,
+    // alpha_num,
+    // alpha_dash,
+    numeric,
+    // regex,
+    // ip,
+    ext,
+    // mimes,
+    size,
+    // digits,
+    image,
+    // dimensions,
+    between,
+    // confirmed,
+    url,
+    // decimal,
+    password
 };

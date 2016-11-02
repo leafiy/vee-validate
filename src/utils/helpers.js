@@ -7,7 +7,7 @@ export const getScope = (el) => el.dataset.scope || (el.form && el.form.dataset.
  * Debounces a function.
  */
 export const debounce = (func, threshold = 100, execAsap = false) => {
-    if (! threshold) {
+    if (!threshold) {
         return func;
     }
 
@@ -37,9 +37,18 @@ export const debounce = (func, threshold = 100, execAsap = false) => {
  * Emits a warning to the console.
  */
 export const warn = (message) => {
-    if (! console) {
+    if (!console) {
         return;
     }
 
     console.warn(`vee-validate: ${message}`); // eslint-disable-line
+};
+
+
+/**
+ * Checks if the value is an object.
+ */
+// eslint-disable-next-line
+export const isObject = (object) => {
+    return object && typeof object === 'object' && !Array.isArray(object) && object !== null;
 };
